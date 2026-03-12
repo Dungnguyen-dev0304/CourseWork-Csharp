@@ -3,7 +3,7 @@
     <File Path="../../../Documents/web.sql" />
     <File Path=".gitignore" />
   </Folder>
-  <Project Path="ThaoCamVien-API/ThaoCamVienAPI.csproj" />
-  <Project Path="ThaoCamVien-App/ThaoCamVienAPP.csproj" />
-  <Project Path="ThaoCamVien/ThaoCamVienWeb.csproj" />
+  <Project Path="ThaoCamVienAPI/ThaoCamVienAPI.csproj" />
+  <Project Path="ThaoCamVienApp/ThaoCamVienAPP.csproj" />
+  <Project Path="ThaoCamVienWeb/ThaoCamVienWeb.csproj" />
 </Solution>
