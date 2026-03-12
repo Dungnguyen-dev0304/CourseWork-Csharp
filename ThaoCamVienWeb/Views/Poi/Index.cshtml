@@ -1,0 +1,13 @@
+﻿@model IEnumerable<ThaoCamVienWeb.Models.Poi>
+
+<h2>Danh sách địa điểm</h2>
+
+<table>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>@item.Name</td>
+			<td>@item.Description</td>
+		</tr>
+	}
+</table>
