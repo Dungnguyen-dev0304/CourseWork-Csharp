@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập / Đăng ký - Audio Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .login-header {
+            background: #28a745;
+            color: white;
+            padding: 22px 20px;
+            text-align: center;
+        }
+
+            .login-header h3 {
+                margin: 0;
+                font-weight: 600;
+            }
+
+        .login-body {
+            padding: 22px;
+        }
+
+        .form-floating:focus-within label {
+            color: #28a745;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        }
+
+        .btn-primary, .btn-login {
+            background-color: #28a745;
+            border: none;
+            padding: 12px;
+            font-size: 1.02rem;
+            font-weight: 500;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 12px;
+            transition: all 0.3s;
+        }
+
+            .btn-primary:hover, .btn-login:hover {
+                background-color: #218838;
+            }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 0.95rem;
+        }
+
+            .switch-form a {
+                color: #28a745;
+                text-decoration: none;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            font-weight: 600;
+            color: #555;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+            .tab-btn.active {
+                background: rgba(40,167,69,0.08);
+                color: #28a745;
+            }
+
+        .small-muted {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h3>Tham Gia Hành Trình</h3>
+            <p class="mb-0 text-white-50 mt-2">Đăng nhập hoặc tạo tài khoản để lưu lộ trình</p>
+        </div>
+        <div class="login-body">
+            <div class="tabs" role="tablist" aria-label="Auth tabs">
+                <button id="tabLogin" class="tab-btn active" type="button">Đăng nhập</button>
+                <button id="tabRegister" class="tab-btn" type="button">Đăng ký</button>
+            </div>
+
+            <div id="loginView">
+                <form id="loginForm">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                        <label for="loginEmail">Địa chỉ Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="loginName" placeholder="Tên của bạn" required>
+                        <label for="loginName">Tên hiển thị</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="remember" checked>
+                        <label class="form-check-label small-muted" for="remember">
+                            Nhớ phiên đăng nhập
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login">Bắt đầu ngay</button>
+                </form>
+
+                <div class="switch-form">
+                    Chưa có tài khoản? <a id="showRegister">Tạo tài khoản</a>
+                </div>
+
+                <div class="switch-form mt-2">
+                    Bỏ qua đăng nhập? <a href="#" onclick="guestLogin()">Truy cập ẩn danh</a>
+                </div>
+            </div>
+
+            <div id="registerView" style="display:none;">
+                <form id="registerForm">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="regName" placeholder="Tên hiển thị" required>
+                        <label for="regName">Tên hiển thị</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="regEmail" placeholder="name@example.com" required>
+                        <label for="regEmail">Địa chỉ Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="regPassword" placeholder="Mật khẩu" required>
+                        <label for="regPassword">Mật khẩu</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="regConfirm" placeholder="Xác nhận mật khẩu" required>
+                        <label for="regConfirm">Xác nhận mật khẩu</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="acceptTerms" required>
+                        <label class="form-check-label small-muted" for="acceptTerms">
+                            Tôi đồng ý với điều khoản sử dụng
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login">Tạo tài khoản</button>
+                </form>
+
+                <div class="switch-form">
+                    Đã có tài khoản? <a id="showLogin">Đăng nhập</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab handling
+        const tabLogin = document.getElementById('tabLogin');
+        const tabRegister = document.getElementById('tabRegister');
+        const loginView = document.getElementById('loginView');
+        const registerView = document.getElementById('registerView');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+
+        function activateLogin() {
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
+            loginView.style.display = '';
+            registerView.style.display = 'none';
+        }
+
+        function activateRegister() {
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            registerView.style.display = '';
+            loginView.style.display = 'none';
+        }
+
+        tabLogin.addEventListener('click', activateLogin);
+        tabRegister.addEventListener('click', activateRegister);
+        showRegister.addEventListener('click', activateRegister);
+        showLogin.addEventListener('click', activateLogin);
+
+        // Simple client-side storage for demo purposes
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('av_users') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('av_users', JSON.stringify(users));
+        }
+
+        // Registration handling
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+
+            if (password !== confirm) {
+                alert('Mật khẩu và xác nhận mật khẩu không khớp.');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.some(u => u.email === email)) {
+                alert('Email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác.');
+                return;
+            }
+
+            // DO NOT store plain passwords in production. This is only for mock/demo.
+            users.push({ name, email, password });
+            saveUsers(users);
+
+            // Auto sign-in after registration
+            localStorage.setItem('user_logged_in', 'true');
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_email', email);
+
+            // Redirect to map
+            window.location.href = '/map.html';
+        });
+
+        // Login handling (mock: checks against stored users; otherwise logs in as guest if not found)
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('loginName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+
+            const users = getUsers();
+            const found = users.find(u => u.email === email);
+
+            if (found) {
+                // In this mock, we don't verify password on login form (password field absent).
+                // For demo: require name to match or ignore.
+                localStorage.setItem('user_logged_in', 'true');
+                localStorage.setItem('user_name', name || found.name);
+                localStorage.setItem('user_email', email);
+                window.location.href = '/map.html';
+                return;
+            }
+
+            // If user not registered, allow quick entry but warn
+            if (!found) {
+                if (!confirm('Email chưa đăng ký. Tiếp tục với truy cập tạm thời?')) return;
+                localStorage.setItem('user_logged_in', 'true');
+                localStorage.setItem('user_name', name || 'Khách tham quan');
+                localStorage.setItem('user_email', email);
+                window.location.href = '/map.html';
+            }
+        });
+
+        function guestLogin() {
+            localStorage.setItem('user_logged_in', 'true');
+            localStorage.setItem('user_name', 'Khách tham quan');
+            localStorage.removeItem('user_email');
+            window.location.href = '/map.html';
+        }
+    </script>
+</body>
+</html>

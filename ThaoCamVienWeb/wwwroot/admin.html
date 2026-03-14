@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Thảo Cầm Viên Audio Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+        .sidebar { background-color: #343a40; min-height: 100vh; color: white; padding-top: 20px;}
+        .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
+        .sidebar a:hover, .sidebar a.active { background-color: #495057; color: white; }
+        .content-area { padding: 30px; }
+        #map-picker { height: 300px; width: 100%; border-radius: 5px; margin-bottom: 15px;}
+    </style>
+</head>
+<body>
+    <div class="row g-0">
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center mb-4">Audio Guide CMS</h4>
+            <a href="#" class="active" id="nav-pois">Quản lý POI</a>
+            <a href="/analytics.html" id="nav-analytics">Bản đồ Thống kê</a>
+        </div>
+        <div class="col-md-10 content-area">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Quản lý Điểm tham quan (POI)</h2>
+                <button class="btn btn-primary" onclick="showCreateModal()">+ Thêm POI mới</button>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên điểm đến</th>
+                                <th>Tọa độ (Lat, Lng)</th>
+                                <th>Bán kính (m)</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="poi-table-body">
+                            <!-- Dữ liệu render qua JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Thêm/Sửa POI -->
+    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="poiModalLabel">Thêm POI mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="poi-form">
+                        <input type="hidden" id="poi-id">
+                        <div class="mb-3">
+                            <label class="form-label">Tên điểm đến</label>
+                            <input type="text" class="form-control" id="poi-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung thuyết minh (TTS script)</label>
+                            <textarea class="form-control" id="poi-desc" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vĩ độ (Latitude)</label>
+                                <input type="number" step="any" class="form-control" id="poi-lat" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kinh độ (Longitude)</label>
+                                <input type="number" step="any" class="form-control" id="poi-lng" required>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted small mb-2">Hoặc nhấp vào bản đồ bên dưới để chọn nhanh tọa độ:</p>
+                        <div id="map-picker"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Bán kính kích hoạt (m)</label>
+                                <input type="number" class="form-control" id="poi-radius" value="15" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Độ ưu tiên</label>
+                                <input type="number" class="form-control" id="poi-priority" value="1">
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="poi-active" checked>
+                            <label class="form-check-label">Hoạt động (Hiển thị trên app)</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" onclick="savePoi()">Lưu POI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/js/admin-logic.js"></script>
+</body>
+</html>

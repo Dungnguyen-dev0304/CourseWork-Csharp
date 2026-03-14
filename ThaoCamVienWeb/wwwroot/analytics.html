@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Thảo Cầm Viên Audio Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+        .sidebar { background-color: #343a40; min-height: 100vh; color: white; padding-top: 20px;}
+        .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
+        .sidebar a:hover, .sidebar a.active { background-color: #495057; color: white; }
+        .content-area { padding: 30px; }
+        #heatmap-container { height: 500px; width: 100%; border-radius: 5px; margin-bottom: 20px;}
+    </style>
+</head>
+<body>
+    <div class="row g-0">
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center mb-4">Audio Guide CMS</h4>
+            <a href="/admin.html" id="nav-pois">Quản lý POI</a>
+            <a href="#" class="active" id="nav-analytics">Bản đồ Thống kê</a>
+        </div>
+        <div class="col-md-10 content-area">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Phân tích & Thống kê (Analytics)</h2>
+                <button class="btn btn-outline-primary" onclick="loadData()">Làm mới dữ liệu</button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Bản đồ Nhiệt (Heatmap) Tuyến di chuyển</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="heatmap-container"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">POI Được Nghe Nhiều Nhất</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush" id="stats-list">
+                                <li class="list-group-item text-center text-muted">Đang tải...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Plugin Heatmap -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    
+    <script>
+        let map;
+        let heatLayer;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            map = L.map('heatmap-container').setView([10.7875, 106.7052], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            
+            loadData();
+        });
+
+        async function loadData() {
+            try {
+                // 1. Tải Location Logs để vẽ Heatmap
+                const resLoc = await fetch('/api/admin/analytics/locations');
+                const locations = await resLoc.json();
+                
+                const heatPoints = locations.map(l => [l.latitude, l.longitude, 1]); // Tọa độ và cường độ (intensity)
+
+                if (heatLayer) {
+                    map.removeLayer(heatLayer);
+                }
+                
+                heatLayer = L.heatLayer(heatPoints, {
+                    radius: 20,
+                    blur: 15,
+                    maxZoom: 17
+                }).addTo(map);
+
+                // 2. Tải Stats
+                const resStats = await fetch('/api/admin/analytics/stats');
+                const stats = await resStats.json();
+                
+                const statsList = document.getElementById('stats-list');
+                statsList.innerHTML = '';
+                
+                if(stats.length === 0) {
+                    statsList.innerHTML = '<li class="list-group-item text-center text-muted">Chưa có dữ liệu</li>';
+                }
+
+                stats.forEach((s, i) => {
+                    statsList.innerHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>#${i+1} ${s.poiName}</strong><br>
+                                <small class="text-muted">Trung bình: ${Math.round(s.avgDuration)} giây</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">${s.visitCount} lượt</span>
+                        </li>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("Lỗi lấy dữ liệu Analytics", err);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-﻿// 1. Khởi tạo bản đồ tại Thảo Cầm Viên
+// 1. Khởi tạo bản đồ tại Thảo Cầm Viên
 var map = L.map('map').setView([10.7875, 106.7052], 17);
 
 // 2. Thêm lớp bản đồ nền
